@@ -1,0 +1,3007 @@
+<!-- FLAMES Love Game Application -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>FLAMES ❤️ | Love Story</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Allura&family=Great+Vibes&display=swap" rel="stylesheet">
+
+<style>
+
+/* =========================
+   FULL-SCREEN ADMIN CONSOLE STYLES
+========================= */
+
+.admin-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background-color: #0c0414;
+    background-image: 
+        linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.2) 100%),
+        url('/flames.webp'),
+        url('flames.webp'),
+        url('/assets/flames.webp'),
+        url('assets/flames.webp'),
+        url('/frontend/flames.webp');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: #ffffff;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+.admin-canvas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.admin-screen-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 24px 36px;
+    box-sizing: border-box;
+}
+
+/* Floating Translucent Controls at Bottom Right (Small & Transparent) */
+.admin-floating-settings {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100000;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-fab-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.65;
+}
+
+.admin-fab-btn:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 105, 180, 0.5);
+    transform: scale(1.1) rotate(45deg);
+    box-shadow: 0 0 16px rgba(255, 105, 180, 0.4);
+}
+
+.admin-fab-btn.active {
+    transform: rotate(90deg);
+    opacity: 1;
+    background: rgba(255, 75, 139, 0.3);
+    border-color: #ff4b8b;
+}
+
+.admin-fab-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(12px) scale(0.9);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-fab-menu.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+.admin-fab-action {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    opacity: 0.8;
+}
+
+.admin-fab-action:hover {
+    opacity: 1;
+    background: rgba(255, 75, 139, 0.35);
+    border-color: #ff4b8b;
+    transform: scale(1.15);
+    box-shadow: 0 0 16px rgba(255, 75, 139, 0.5);
+}
+
+.admin-fab-action.door-btn:hover {
+    background: rgba(255, 71, 87, 0.45);
+    border-color: #ff4757;
+    box-shadow: 0 0 16px rgba(255, 71, 87, 0.6);
+}
+
+.admin-fab-tooltip {
+    position: absolute;
+    right: 44px;
+    background: rgba(15, 5, 25, 0.85);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.admin-fab-action:hover .admin-fab-tooltip {
+    opacity: 1;
+}
+
+/* Ultra-Translucent Crystal Glass Main Card */
+.admin-main-card {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.04);
+    backdrop-filter: blur(1.5px);
+    -webkit-backdrop-filter: blur(1.5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.admin-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    font-size: 1rem;
+    opacity: 0.6;
+}
+
+.admin-search-wrapper input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 11px 16px 11px 40px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.admin-search-wrapper input:focus {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: #ff4b8b;
+    box-shadow: 0 0 16px rgba(255, 75, 139, 0.3);
+}
+
+.refresh-indicator {
+    position: absolute;
+    right: 14px;
+    font-size: 0.72rem;
+    color: rgba(46, 204, 113, 0.85);
+    font-weight: 600;
+}
+
+.admin-table-scroll {
+    flex: 1;
+    overflow-y: auto;
+    border-radius: 16px;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.admin-table th {
+    background: rgba(0, 0, 0, 0.35);
+    padding: 14px 18px;
+    text-align: left;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.admin-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    transition: background 0.2s ease;
+}
+
+.admin-table tr:hover td {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.pair-names {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.result-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    background: rgba(255, 105, 180, 0.2);
+    color: #ff9a9e;
+}
+
+.attempts-badge {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+}
+
+/* Change Password Modal */
+.password-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.password-modal-card {
+    background: linear-gradient(145deg, #1f0b29, #12051a);
+    border: 1px solid rgba(255, 126, 179, 0.4);
+    box-shadow: 0 0 50px rgba(255, 75, 139, 0.3);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 440px;
+    padding: 28px;
+    color: white;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.password-modal-card h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ff9a9e;
+    margin-bottom: 6px;
+}
+
+.password-modal-card p {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.65);
+    margin-bottom: 20px;
+}
+
+.modal-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.modal-input-group label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+}
+
+.modal-input-group input {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: white;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.modal-input-group input:focus {
+    border-color: #ff7eb3;
+}
+
+.modal-btn-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.modal-cancel-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.modal-save-btn {
+    background: linear-gradient(135deg, #ff416c, #ff4b8b);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+
+    font-family: "Allura", cursive;
+
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.2), transparent 25%),
+        radial-gradient(circle at 80% 80%, rgba(255,255,255,.15), transparent 25%),
+        linear-gradient(135deg, #ff416c, #ff4b8b, #8e2de2);
+
+    color: white;
+}
+
+/* =========================
+   BACKGROUND
+========================= */
+
+.background {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: .35;
+    animation: blobMove 12s infinite alternate ease-in-out;
+}
+
+.blob.one {
+    width: 300px;
+    height: 300px;
+    background: #ff9a9e;
+    top: -100px;
+    left: -80px;
+}
+
+.blob.two {
+    width: 400px;
+    height: 400px;
+    background: #a18cd1;
+    right: -150px;
+    bottom: -150px;
+    animation-delay: 3s;
+}
+
+.blob.three {
+    width: 250px;
+    height: 250px;
+    background: #fad0c4;
+    left: 40%;
+    top: 40%;
+    animation-delay: 6s;
+}
+
+@keyframes blobMove {
+    from {
+        transform: translate(0,0) scale(1);
+    }
+
+    to {
+        transform: translate(80px,-50px) scale(1.2);
+    }
+}
+
+/* =========================
+   FLOATING HEARTS
+========================= */
+
+.floating-heart {
+    position: absolute;
+    bottom: -50px;
+    font-size: 25px;
+    animation: floatHeart linear infinite;
+    opacity: 0;
+}
+
+@keyframes floatHeart {
+
+    0% {
+        transform: translateY(0) rotate(0);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: .8;
+    }
+
+    100% {
+        transform: translateY(-120vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.wrapper {
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 30px 15px;
+
+    position: relative;
+    z-index: 2;
+}
+
+.card {
+    width: 100%;
+    max-width: 560px;
+
+    padding: 42px 35px;
+
+    border-radius: 35px;
+
+    background: rgba(255,255,255,.13);
+
+    border: 1px solid rgba(255,255,255,.3);
+
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+
+    box-shadow:
+        0 30px 80px rgba(50,0,40,.35),
+        inset 0 1px rgba(255,255,255,.3);
+
+    text-align: center;
+}
+
+/* =========================
+   HEART LOGO
+========================= */
+
+.heart-logo {
+    width: 90px;
+    height: 90px;
+
+    margin: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.18);
+
+    font-size: 48px;
+
+    box-shadow:
+        0 0 40px rgba(255,255,255,.3);
+
+    animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+
+    0%,100% {
+        transform: scale(1);
+    }
+
+    15% {
+        transform: scale(1.15);
+    }
+
+    30% {
+        transform: scale(1);
+    }
+
+    45% {
+        transform: scale(1.12);
+    }
+}
+
+/* =========================
+   TITLE
+========================= */
+
+h1 {
+    font-family: "Great Vibes", cursive;
+
+    font-size: 78px;
+
+    line-height: 1;
+
+    margin-top: 20px;
+
+    font-weight: 400;
+
+    text-shadow:
+        0 5px 25px rgba(0,0,0,.25);
+}
+
+.subtitle {
+    margin-top: 12px;
+
+    font-family: "Allura", cursive;
+
+    font-size: 28px;
+
+    letter-spacing: .3px;
+
+    opacity: .9;
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+.inputs {
+    margin-top: 35px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+
+    left: 18px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    font-size: 23px;
+
+    z-index: 2;
+}
+
+input {
+    width: 100%;
+
+    padding:
+        17px
+        20px
+        17px
+        55px;
+
+    border: none;
+    outline: none;
+
+    border-radius: 17px;
+
+    background: rgba(255,255,255,.94);
+
+    color: #5a2345;
+
+    font-family: "Allura", cursive;
+
+    font-size: 31px;
+
+    font-weight: 400;
+
+    line-height: 1;
+
+    transition: .3s;
+}
+
+input::placeholder {
+    color: #a28b96;
+
+    font-family: "Allura", cursive;
+
+    font-size: 29px;
+
+    font-weight: 400;
+
+    opacity: .75;
+}
+
+input:focus {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 30px rgba(255,255,255,.18),
+        0 0 0 3px rgba(255,255,255,.25);
+}
+
+/* =========================
+   MAIN BUTTON
+========================= */
+
+.calculate-btn {
+    position: relative;
+
+    overflow: hidden;
+
+    width: 100%;
+
+    margin-top: 22px;
+
+    padding: 17px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff1744,
+            #ff4081
+        );
+
+    color: white;
+
+    font-family: "Allura", cursive;
+
+    font-size: 31px;
+
+    font-weight: 400;
+
+    letter-spacing: .5px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 12px 30px rgba(255,23,68,.35);
+
+    transition: .3s;
+}
+
+.calculate-btn:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 18px 40px rgba(255,23,68,.45);
+}
+
+.calculate-btn:active {
+    transform: scale(.97);
+}
+
+.calculate-btn::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: -100%;
+
+    width: 60%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.4),
+            transparent
+        );
+
+    transform: skewX(-20deg);
+
+    transition: .7s;
+}
+
+.calculate-btn:hover::after {
+    left: 140%;
+}
+
+/* =========================
+   FLAMES
+========================= */
+
+.flames-container {
+    display: none;
+    margin-top: 30px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.flames-title {
+    font-family: "Allura", cursive;
+    font-size: clamp(20px, 5vw, 27px);
+    opacity: .85;
+    margin-bottom: 15px;
+    word-break: break-word;
+}
+
+.flames {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(4px, 1.8vw, 10px);
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    flex-wrap: nowrap;
+}
+
+.flame-letter {
+    flex: 1 1 0;
+    max-width: 48px;
+    min-width: 0;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: clamp(8px, 2.5vw, 14px);
+    background: rgba(255,255,255,.15);
+    font-family: "Allura", cursive;
+    font-size: clamp(18px, 5.5vw, 27px);
+    font-weight: 400;
+    transition: .4s;
+    box-sizing: border-box;
+}
+
+.flame-letter.removing {
+    animation: removeLetter .7s forwards;
+}
+
+@keyframes removeLetter {
+
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.5) rotate(15deg);
+    }
+
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+/* =========================
+   RESULT
+========================= */
+
+.result {
+    display: none;
+
+    margin-top: 30px;
+
+    padding: 30px 20px;
+
+    border-radius: 25px;
+
+    background: rgba(255,255,255,.14);
+
+    border: 1px solid rgba(255,255,255,.25);
+
+    animation: resultAppear .8s ease;
+}
+
+@keyframes resultAppear {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(30px)
+            scale(.9);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+.result-names {
+    font-family: "Great Vibes", cursive;
+
+    font-size: 38px;
+
+    margin-bottom: 10px;
+}
+
+.result-letter {
+    font-family: "Allura", cursive;
+
+    font-size: 82px;
+
+    font-weight: 400;
+
+    text-shadow:
+        0 0 25px rgba(255,255,255,.6);
+}
+
+.result-title {
+    font-family: "Great Vibes", cursive;
+
+    font-size: 58px;
+
+    margin-top: -5px;
+
+    font-weight: 400;
+}
+
+.result-message {
+    font-family: "Allura", cursive;
+
+    font-size: 27px;
+
+    opacity: .9;
+
+    margin-top: 8px;
+
+    line-height: 1.5;
+}
+
+/* =========================
+   COMPATIBILITY
+========================= */
+
+.compatibility {
+    margin-top: 25px;
+}
+
+.compatibility-label {
+    display: flex;
+
+    justify-content: space-between;
+
+    font-family: "Allura", cursive;
+
+    font-size: 25px;
+
+    margin-bottom: 8px;
+
+    opacity: .9;
+}
+
+.progress {
+    width: 100%;
+
+    height: 10px;
+
+    border-radius: 20px;
+
+    background: rgba(255,255,255,.15);
+
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+
+    width: 0;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #fff,
+            #ffd1dc
+        );
+
+    transition: width 2s ease;
+}
+
+/* =========================
+   REVEAL CALCULATION
+========================= */
+
+.reveal-btn {
+    width: 100%;
+
+    margin-top: 18px;
+
+    padding: 14px;
+
+    border-radius: 15px;
+
+    border:
+        1px solid rgba(255,255,255,.3);
+
+    background:
+        rgba(255,255,255,.12);
+
+    color: white;
+
+    font-family: "Allura", cursive;
+
+    font-size: 28px;
+
+    font-weight: 400;
+
+    cursor: pointer;
+
+    transition: .3s;
+}
+
+.reveal-btn:hover {
+    background:
+        rgba(255,255,255,.22);
+
+    transform:
+        translateY(-2px);
+}
+
+/* =========================
+   CALCULATION PANEL
+========================= */
+
+.calculation {
+    display: none;
+
+    margin-top: 18px;
+
+    padding: 22px;
+
+    border-radius: 20px;
+
+    background: rgba(0,0,0,.12);
+
+    border:
+        1px solid rgba(255,255,255,.2);
+
+    text-align: left;
+
+    animation:
+        calculationAppear .6s ease;
+}
+
+@keyframes calculationAppear {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+.calculation h3 {
+    font-family: "Great Vibes", cursive;
+
+    font-size: 35px;
+
+    text-align: center;
+
+    margin-bottom: 15px;
+
+    font-weight: 400;
+}
+
+.calc-step {
+    padding: 12px 0;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.12);
+
+    font-family: "Allura", cursive;
+
+    font-size: 25px;
+
+    line-height: 1.4;
+}
+
+.calc-step:last-child {
+    border-bottom: none;
+}
+
+.calc-label {
+    opacity: .65;
+
+    font-family: "Allura", cursive;
+
+    font-size: 22px;
+}
+
+.calc-value {
+    font-family: "Allura", cursive;
+
+    font-size: 27px;
+
+    font-weight: 400;
+
+    margin-top: 3px;
+
+    word-break: break-word;
+}
+
+.elimination {
+    margin-top: 12px;
+
+    padding: 12px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255,255,255,.08);
+
+    font-family: "Allura", cursive;
+
+    font-size: 23px;
+
+    line-height: 1.6;
+}
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+.actions {
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 22px;
+}
+
+.action-btn {
+    flex: 1;
+
+    padding: 13px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    background:
+        rgba(255,255,255,.16);
+
+    color: white;
+
+    font-family: "Allura", cursive;
+
+    font-size: 28px;
+
+    font-weight: 400;
+
+    cursor: pointer;
+
+    transition: .3s;
+}
+
+.action-btn:hover {
+    background:
+        rgba(255,255,255,.27);
+
+    transform:
+        translateY(-2px);
+}
+
+/* =========================
+   QUOTE
+========================= */
+
+.quote {
+    margin-top: 25px;
+
+    font-family:
+        "Great Vibes",
+        cursive;
+
+    font-size: 32px;
+
+    opacity: .9;
+}
+
+/* =========================
+   MOBILE & RESPONSIVE DESIGN
+========================= */
+
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
+}
+
+.flames {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    max-width: 100%;
+}
+
+.flame-letter {
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+}
+
+@media(max-width: 500px) {
+
+    .wrapper {
+        padding: 20px 12px;
+        min-height: 100vh;
+    }
+
+    .card {
+        padding: 28px 16px;
+        border-radius: 24px;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    h1 {
+        font-size: 54px;
+    }
+
+    .subtitle {
+        font-size: 22px;
+    }
+
+    .heart-logo {
+        width: 68px;
+        height: 68px;
+        font-size: 34px;
+    }
+
+    .inputs {
+        gap: 12px;
+    }
+
+    .input-wrapper {
+        padding: 10px 14px;
+        border-radius: 16px;
+    }
+
+    input {
+        font-size: 24px;
+        width: 100%;
+    }
+
+    input::placeholder {
+        font-size: 23px;
+    }
+
+    .calculate-btn {
+        font-size: 24px;
+        padding: 14px;
+        border-radius: 18px;
+    }
+
+    .flames-container {
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .flames {
+        gap: 5px;
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+    }
+
+    .flame-letter {
+        flex: 1 1 0;
+        max-width: 44px;
+        min-width: 28px;
+        aspect-ratio: 1 / 1;
+        font-size: 22px;
+        border-radius: 10px;
+    }
+
+    .result {
+        padding: 22px 14px;
+        border-radius: 20px;
+    }
+
+    .result-names {
+        font-size: 28px;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .result-letter {
+        font-size: 66px;
+    }
+
+    .result-title {
+        font-size: 38px;
+        word-break: break-word;
+    }
+
+    .result-message {
+        font-size: 22px;
+        word-break: break-word;
+    }
+
+    .actions {
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        font-size: 22px;
+        padding: 10px 14px;
+        flex: 1 1 auto;
+    }
+
+    .calculation {
+        padding: 16px;
+    }
+
+    .calc-value {
+        font-size: 22px;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* Admin Portal on Phone */
+    .admin-screen-content {
+        padding: 14px 10px;
+    }
+
+    .admin-main-card {
+        padding: 14px 10px;
+        border-radius: 16px;
+    }
+
+    .admin-table th, .admin-table td {
+        padding: 10px 8px;
+        font-size: 0.78rem;
+    }
+
+    .pair-names {
+        font-size: 0.78rem;
+        word-break: break-word;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="background">
+
+    <div class="blob one"></div>
+    <div class="blob two"></div>
+    <div class="blob three"></div>
+
+    <div class="floating-heart"
+         style="left:5%;animation-duration:9s;">
+        ❤️
+    </div>
+
+    <div class="floating-heart"
+         style="left:15%;animation-duration:12s;animation-delay:2s;">
+        💕
+    </div>
+
+    <div class="floating-heart"
+         style="left:28%;animation-duration:10s;animation-delay:4s;">
+        💗
+    </div>
+
+    <div class="floating-heart"
+         style="left:43%;animation-duration:13s;animation-delay:1s;">
+        💖
+    </div>
+
+    <div class="floating-heart"
+         style="left:58%;animation-duration:11s;animation-delay:5s;">
+        ❤️
+    </div>
+
+    <div class="floating-heart"
+         style="left:72%;animation-duration:14s;animation-delay:3s;">
+        💘
+    </div>
+
+    <div class="floating-heart"
+         style="left:88%;animation-duration:10s;animation-delay:6s;">
+        💕
+    </div>
+
+</div>
+
+<main class="wrapper">
+
+<section class="card">
+
+    <div class="heart-logo">
+        ❤️
+    </div>
+
+    <h1>
+        FLAMES
+    </h1>
+
+    <p class="subtitle">
+        Every love story begins somewhere... 💕
+    </p>
+
+    <div class="inputs">
+
+        <div class="input-wrapper">
+
+            <span class="input-icon">
+                👤
+            </span>
+
+            <input
+                id="name1"
+                type="text"
+                placeholder="Your name..."
+                autocomplete="off"
+            >
+
+        </div>
+
+        <div class="input-wrapper">
+
+            <span class="input-icon">
+                💗
+            </span>
+
+            <input
+                id="name2"
+                type="text"
+                placeholder="Their name..."
+                autocomplete="off"
+            >
+
+        </div>
+
+    </div>
+
+    <button
+        class="calculate-btn"
+        onclick="startFlames()"
+    >
+        💘 Discover Your Destiny
+    </button>
+
+    <div
+        class="flames-container"
+        id="flamesContainer"
+    >
+
+        <div class="flames-title">
+            The universe is calculating your story... ✨
+        </div>
+
+        <div
+            class="flames"
+            id="flames"
+        >
+
+            <div class="flame-letter">F</div>
+            <div class="flame-letter">L</div>
+            <div class="flame-letter">A</div>
+            <div class="flame-letter">M</div>
+            <div class="flame-letter">E</div>
+            <div class="flame-letter">S</div>
+
+        </div>
+
+    </div>
+
+    <div
+        class="result"
+        id="result"
+    >
+
+        <div
+            class="result-names"
+            id="resultNames"
+        ></div>
+
+        <div
+            class="result-letter"
+            id="resultLetter"
+        ></div>
+
+        <div
+            class="result-title"
+            id="resultTitle"
+        ></div>
+
+        <div
+            class="result-message"
+            id="resultMessage"
+        ></div>
+
+        <div class="compatibility">
+
+            <div class="compatibility-label">
+
+                <span>
+                    ❤️ Love Compatibility
+                </span>
+
+                <span id="percentage">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    id="progressBar"
+                ></div>
+
+            </div>
+
+        </div>
+
+        <button
+            class="reveal-btn"
+            id="revealBtn"
+            onclick="revealCalculation()"
+        >
+            🔐 Reveal Our Calculation
+        </button>
+
+        <div
+            class="calculation"
+            id="calculation"
+        >
+
+            <h3>
+                Our Little Love Calculation 💕
+            </h3>
+
+            <div class="calc-step">
+
+                <div class="calc-label">
+                    Your name
+                </div>
+
+                <div
+                    class="calc-value"
+                    id="calcName1"
+                ></div>
+
+            </div>
+
+            <div class="calc-step">
+
+                <div class="calc-label">
+                    Their name
+                </div>
+
+                <div
+                    class="calc-value"
+                    id="calcName2"
+                ></div>
+
+            </div>
+
+            <div class="calc-step">
+
+                <div class="calc-label">
+                    Letters after removing common pairs
+                </div>
+
+                <div
+                    class="calc-value"
+                    id="calcRemaining"
+                ></div>
+
+            </div>
+
+            <div class="calc-step">
+
+                <div class="calc-label">
+                    Remaining letter count
+                </div>
+
+                <div
+                    class="calc-value"
+                    id="calcCount"
+                ></div>
+
+            </div>
+
+            <div class="calc-step">
+
+                <div class="calc-label">
+                    FLAMES elimination journey
+                </div>
+
+                <div
+                    class="elimination"
+                    id="calcElimination"
+                ></div>
+
+            </div>
+
+            <div class="calc-step">
+
+                <div class="calc-label">
+                    Destiny chose
+                </div>
+
+                <div
+                    class="calc-value"
+                    id="calcFinal"
+                ></div>
+
+            </div>
+
+        </div>
+
+        <div class="actions">
+
+            <button
+                class="action-btn"
+                onclick="copyResult()"
+            >
+                📋 Copy
+            </button>
+
+            <button
+                class="action-btn"
+                onclick="shareResult()"
+            >
+                📤 Share
+            </button>
+
+            <button
+                class="action-btn"
+                onclick="resetGame()"
+            >
+                🔄 Again
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="quote">
+        "Maybe it's not just a game..." 💕
+    </div>
+
+</section>
+
+</main>
+
+<script>
+
+const resultData = {
+
+    F: {
+        title: "Friends",
+        icon: "🤝",
+        message:
+            "Your connection begins with friendship, laughter and a bond that feels naturally comfortable. 💕"
+    },
+
+    L: {
+        title: "Lovers",
+        icon: "❤️",
+        message:
+            "There is something beautifully special between you two... perhaps this is where your love story begins. ❤️"
+    },
+
+    A: {
+        title: "Affection",
+        icon: "💗",
+        message:
+            "There is a warm, sweet affection between you two. Something about this connection feels special. ✨"
+    },
+
+    M: {
+        title: "Marriage",
+        icon: "💍",
+        message:
+            "The FLAMES universe has spoken... this connection has serious forever energy. 💍❤️"
+    },
+
+    E: {
+        title: "Enemies",
+        icon: "😈",
+        message:
+            "You two definitely know how to push each other's buttons! Maybe the universe is being dramatic. 😂❤️"
+    },
+
+    S: {
+        title: "Siblings",
+        icon: "🫶",
+        message:
+            "There is a comfortable, caring bond between you two that feels almost like family. 🫶"
+    }
+
+};
+
+let currentCalculation = null;
+
+// --- Backend API configuration -------------------------------------------
+const API_BASE_URL =
+    window.FLAMES_API_URL ||
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+        ? "http://localhost:5000/api"
+        : "https://flames-ldp2.onrender.com/api");
+
+let isCalculating = false;
+let lastAttempts = null;
+let requestToken = 0;
+// -------------------------------------------------------------------------
+
+function calculateFlamesDetailed(name1, name2) {
+
+    let a = name1
+        .toLowerCase()
+        .replace(/[^a-z]/g, "")
+        .split("");
+
+    let b = name2
+        .toLowerCase()
+        .replace(/[^a-z]/g, "")
+        .split("");
+
+    const originalA = [...a];
+    const originalB = [...b];
+
+    for (let i = 0; i < a.length; i++) {
+
+        const index = b.indexOf(a[i]);
+
+        if (index !== -1) {
+
+            a[i] = "";
+            b[index] = "";
+
+        }
+
+    }
+
+    const remainingA =
+        a.filter(x => x !== "");
+
+    const remainingB =
+        b.filter(x => x !== "");
+
+    const remaining =
+        remainingA.length +
+        remainingB.length;
+
+    const count =
+        remaining > 0 ? remaining : 1;
+
+    let flames = [
+        "F",
+        "L",
+        "A",
+        "M",
+        "E",
+        "S"
+    ];
+
+    let eliminationSteps = [];
+
+    let index = 0;
+
+    while (flames.length > 1) {
+
+        index =
+            (index + count - 1)
+            % flames.length;
+
+        const removed =
+            flames[index];
+
+        eliminationSteps.push(
+            `${flames.join(" → ")}  ❌ ${removed}`
+        );
+
+        flames.splice(index, 1);
+    }
+
+    const finalResult =
+        flames[0];
+
+    return {
+        result: finalResult,
+        remainingA,
+        remainingB,
+        remaining,
+        eliminationSteps,
+        originalA,
+        originalB
+    };
+}
+
+function calculateCompatibility(
+    name1,
+    name2,
+    result
+) {
+
+    let combined =
+        name1.toLowerCase() +
+        name2.toLowerCase();
+
+    let hash = 0;
+
+    for (
+        let i = 0;
+        i < combined.length;
+        i++
+    ) {
+
+        hash =
+            ((hash << 5) - hash) +
+            combined.charCodeAt(i);
+
+        hash |= 0;
+    }
+
+    let base =
+        Math.abs(hash) % 41 + 55;
+
+    const bonus = {
+
+        F: 4,
+        L: 9,
+        A: 7,
+        M: 10,
+        E: -15,
+        S: 2
+
+    };
+
+    return Math.min(
+        99,
+        Math.max(
+            35,
+            base + bonus[result]
+        )
+    );
+}
+
+function checkAdminPassword(enteredPass) {
+    const defaultPass = "admin1234567890";
+    const customPass = localStorage.getItem("flames_admin_password");
+    return enteredPass === defaultPass || (customPass && enteredPass === customPass);
+}
+
+async function startFlames() {
+
+    const name1 =
+        document
+            .getElementById("name1")
+            .value
+            .trim();
+
+    const name2 =
+        document
+            .getElementById("name2")
+            .value
+            .trim();
+
+    if (!name1 || !name2) {
+
+        shakeCard();
+
+        return;
+    }
+
+    // Secret Admin Mode trigger
+    if (name1.toLowerCase() === "admin" && checkAdminPassword(name2)) {
+        openAdminDashboard();
+        return;
+    }
+
+    // Ignore double-taps while a calculation is already running.
+    if (isCalculating) {
+
+        return;
+    }
+
+    isCalculating = true;
+
+    const container =
+        document.getElementById(
+            "flamesContainer"
+        );
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+    const calculateBtn =
+        document.querySelector(
+            ".calculate-btn"
+        );
+
+    const originalBtnText =
+        calculateBtn.textContent;
+
+    result.style.display = "none";
+
+    document.getElementById(
+        "calculation"
+    ).style.display = "none";
+
+    document.getElementById(
+        "revealBtn"
+    ).textContent =
+        "🔐 Reveal Our Calculation";
+
+    container.style.display =
+        "block";
+
+    // Prevent duplicate submissions and show a romantic loading state.
+    calculateBtn.disabled = true;
+    calculateBtn.textContent =
+        "Writing our little love story... 💕";
+
+    const letters =
+        document.querySelectorAll(
+            ".flame-letter"
+        );
+
+    letters.forEach(letter => {
+
+        letter.classList.remove(
+            "removing"
+        );
+
+        letter.style.display =
+            "flex";
+
+        letter.style.transform =
+            "";
+
+        letter.style.boxShadow =
+            "";
+
+    });
+
+    // Local calculation still drives the cinematic animation, so it keeps
+    // playing even while the backend request is in flight.
+    const calculation =
+        calculateFlamesDetailed(
+            name1,
+            name2
+        );
+
+    currentCalculation =
+        calculation;
+
+    const localCode =
+        calculation.result;
+
+    const myToken =
+        ++requestToken;
+
+    let resultCode = localCode;
+    let backendPercentage = null;
+
+    const calculateUrls = [
+        "https://flames-ldp2.onrender.com/api/flames/calculate",
+        `${API_BASE_URL}/flames/calculate`,
+        "/api/flames/calculate"
+    ];
+
+    for (const url of calculateUrls) {
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name1,
+                    name2
+                })
+            });
+
+            if (response.ok) {
+                const payload = await response.json();
+                if (payload.success && payload.data) {
+                    const data = payload.data;
+                    resultCode = (data.letter || localCode).toUpperCase();
+                    backendPercentage = typeof data.percentage === "number" ? data.percentage : null;
+                    lastAttempts = typeof data.attempts === "number" ? data.attempts : null;
+                    break;
+                }
+            }
+        } catch (err) {
+            // try next endpoint
+        }
+    }
+
+    // If the user pressed "Again" while waiting, ignore the stale reply.
+    if (myToken !== requestToken) {
+
+        return;
+    }
+
+    // Eliminate non-result letters one by one with a staggered
+    // spin & fade animation (reuses the removeLetter keyframes).
+    letters.forEach((letter, index) => {
+
+        setTimeout(() => {
+
+            // The final result letter survives — pop it with a glow.
+            if (letter.textContent.trim() === resultCode) {
+
+                letter.style.transform = "scale(1.35)";
+                letter.style.boxShadow =
+                    "0 0 30px rgba(255,255,255,.6)";
+
+                return;
+
+            }
+
+            // Every other letter gets eliminated.
+            letter.classList.add(
+                "removing"
+            );
+
+        }, 300 + index * 200);
+
+    });
+
+    // Show final result after all elimination finishes, then restore button.
+    setTimeout(() => {
+
+        // Bail if the user pressed "Again" while the animation played.
+        if (myToken !== requestToken) {
+
+            return;
+        }
+
+        showResult(
+            name1,
+            name2,
+            resultCode,
+            backendPercentage
+        );
+
+        isCalculating = false;
+        calculateBtn.disabled = false;
+        calculateBtn.textContent =
+            originalBtnText;
+
+    }, 2600);
+}
+
+function showResult(
+    name1,
+    name2,
+    resultCode,
+    backendPercentage
+) {
+
+    const data =
+        resultData[resultCode];
+
+    document.getElementById(
+        "resultNames"
+    ).textContent =
+        `${name1} ❤️ ${name2}`;
+
+    document.getElementById(
+        "resultLetter"
+    ).textContent =
+        `${resultCode} ${data.icon}`;
+
+    document.getElementById(
+        "resultTitle"
+    ).textContent =
+        data.title;
+
+    document.getElementById(
+        "resultMessage"
+    ).textContent =
+        data.message;
+
+    // Prefer the authoritative percentage returned by the backend; fall back
+    // to the local calculation so the UI still works if it is ever missing.
+    const percentage =
+        typeof backendPercentage ===
+        "number"
+            ? backendPercentage
+            : calculateCompatibility(
+                name1,
+                name2,
+                resultCode
+            );
+
+    document.getElementById(
+        "percentage"
+    ).textContent =
+        `${percentage}%`;
+
+    document.getElementById(
+        "result"
+    ).style.display =
+        "block";
+
+    setTimeout(() => {
+
+        document.getElementById(
+            "progressBar"
+        ).style.width =
+            `${percentage}%`;
+
+    }, 100);
+
+    if (
+        resultCode === "L" ||
+        resultCode === "M"
+    ) {
+
+        createConfetti();
+    }
+}
+
+function revealCalculation() {
+
+    if (!currentCalculation) {
+        return;
+    }
+
+    const panel =
+        document.getElementById(
+            "calculation"
+        );
+
+    const button =
+        document.getElementById(
+            "revealBtn"
+        );
+
+    if (
+        panel.style.display === "block"
+    ) {
+
+        panel.style.display =
+            "none";
+
+        button.textContent =
+            "🔐 Reveal Our Calculation";
+
+        return;
+    }
+
+    const name1 =
+        document
+            .getElementById("name1")
+            .value
+            .trim();
+
+    const name2 =
+        document
+            .getElementById("name2")
+            .value
+            .trim();
+
+    document.getElementById(
+        "calcName1"
+    ).textContent =
+        name1
+            .toLowerCase()
+            .replace(/[^a-z]/g, "")
+            .split("")
+            .join(" + ");
+
+    document.getElementById(
+        "calcName2"
+    ).textContent =
+        name2
+            .toLowerCase()
+            .replace(/[^a-z]/g, "")
+            .split("")
+            .join(" + ");
+
+    const remainingText =
+        [
+            ...currentCalculation.remainingA,
+            ...currentCalculation.remainingB
+        ].join(" + ");
+
+    document.getElementById(
+        "calcRemaining"
+    ).textContent =
+        remainingText ||
+        "No letters remain";
+
+    document.getElementById(
+        "calcCount"
+    ).textContent =
+        currentCalculation.remaining;
+
+    document.getElementById(
+        "calcElimination"
+    ).innerHTML =
+        currentCalculation
+            .eliminationSteps
+            .map(
+                step =>
+                    `<div>${step}</div>`
+            )
+            .join("");
+
+    const final =
+        currentCalculation.result;
+
+    document.getElementById(
+        "calcFinal"
+    ).textContent =
+        `${final} — ${resultData[final].title} ${resultData[final].icon}`;
+
+    panel.style.display =
+        "block";
+
+    button.textContent =
+        "🔓 Hide Calculation";
+
+    panel.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+    });
+}
+
+function copyResult(button) {
+
+    const names =
+        document.getElementById(
+            "resultNames"
+        ).textContent;
+
+    const title =
+        document.getElementById(
+            "resultTitle"
+        ).textContent;
+
+    const percentage =
+        document.getElementById(
+            "percentage"
+        ).textContent;
+
+    const attemptsLine =
+        lastAttempts
+            ? `\n\nAttempts: ${lastAttempts}`
+            : "";
+
+    const text =
+`❤️ OUR FLAMES RESULT ❤️
+
+${names}
+
+Relationship: ${title}
+
+Love Compatibility: ${percentage}${attemptsLine}
+
+Maybe it's not just a game... 💕`;
+
+    navigator.clipboard
+        .writeText(text)
+        .then(() => {
+
+            const buttons =
+                document.querySelectorAll(
+                    ".action-btn"
+                );
+
+            const copyButton =
+                buttons[0];
+
+            const original =
+                copyButton.textContent;
+
+            copyButton.textContent =
+                "✅ Copied!";
+
+            setTimeout(() => {
+
+                copyButton.textContent =
+                    original;
+
+            }, 1500);
+
+        });
+}
+
+function shareResult() {
+
+    const names =
+        document.getElementById(
+            "resultNames"
+        ).textContent;
+
+    const title =
+        document.getElementById(
+            "resultTitle"
+        ).textContent;
+
+    const percentage =
+        document.getElementById(
+            "percentage"
+        ).textContent;
+
+    const attemptsLine =
+        lastAttempts
+            ? `\n\nAttempts: ${lastAttempts}`
+            : "";
+
+    const text =
+`❤️ FLAMES RESULT ❤️
+
+${names}
+
+Relationship: ${title}
+
+Love Compatibility: ${percentage}${attemptsLine}
+
+Maybe it's not just a game... 💕`;
+
+    if (navigator.share) {
+
+        navigator.share({
+
+            title:
+                "Our FLAMES Result ❤️",
+
+            text
+
+        });
+
+    } else {
+
+        navigator.clipboard
+            .writeText(text)
+            .then(() => {
+
+                alert(
+                    "Result copied to clipboard! ❤️"
+                );
+
+            });
+    }
+}
+
+function resetGame() {
+
+    // Invalidate any in-flight backend request so a stale result can't appear
+    // after the user has started over. Does NOT touch database history.
+    requestToken++;
+    isCalculating = false;
+    lastAttempts = null;
+
+    const calculateBtn =
+        document.querySelector(
+            ".calculate-btn"
+        );
+
+    if (calculateBtn) {
+
+        calculateBtn.disabled = false;
+        calculateBtn.textContent =
+            "💘 Discover Your Destiny";
+
+    }
+
+    document.getElementById(
+        "name1"
+    ).value = "";
+
+    document.getElementById(
+        "name2"
+    ).value = "";
+
+    document.getElementById(
+        "result"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "flamesContainer"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "calculation"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "revealBtn"
+    ).textContent =
+        "🔐 Reveal Our Calculation";
+
+    document.getElementById(
+        "progressBar"
+    ).style.width =
+        "0%";
+
+    document.getElementById(
+        "percentage"
+    ).textContent =
+        "0%";
+
+    currentCalculation =
+        null;
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+function shakeCard() {
+
+    const card =
+        document.querySelector(
+            ".card"
+        );
+
+    card.animate(
+        [
+            {
+                transform:
+                    "translateX(0)"
+            },
+
+            {
+                transform:
+                    "translateX(-10px)"
+            },
+
+            {
+                transform:
+                    "translateX(10px)"
+            },
+
+            {
+                transform:
+                    "translateX(-7px)"
+            },
+
+            {
+                transform:
+                    "translateX(7px)"
+            },
+
+            {
+                transform:
+                    "translateX(0)"
+            }
+        ],
+        {
+            duration: 450
+        }
+    );
+
+    alert(
+        "Enter both names first ❤️"
+    );
+}
+
+function createConfetti() {
+
+    const symbols = [
+
+        "❤️",
+        "💕",
+        "💖",
+        "💗",
+        "✨",
+        "💘",
+        "🌹",
+        "💞",
+        "🥰"
+
+    ];
+
+    for (
+        let i = 0;
+        i < 70;
+        i++
+    ) {
+
+        const confetti =
+            document.createElement(
+                "div"
+            );
+
+        confetti.textContent =
+            symbols[
+                Math.floor(
+                    Math.random() *
+                    symbols.length
+                )
+            ];
+
+        confetti.style.position =
+            "fixed";
+
+        confetti.style.left =
+            Math.random() * 100 +
+            "vw";
+
+        confetti.style.top =
+            "-30px";
+
+        confetti.style.fontSize =
+            (
+                12 +
+                Math.random() * 20
+            ) + "px";
+
+        confetti.style.zIndex =
+            "9999";
+
+        confetti.style.pointerEvents =
+            "none";
+
+        document.body.appendChild(
+            confetti
+        );
+
+        const duration =
+            2000 +
+            Math.random() * 3000;
+
+        confetti.animate(
+            [
+                {
+                    transform:
+                        "translateY(0) rotate(0deg)",
+
+                    opacity: 1
+                },
+
+                {
+                    transform:
+                        `translateY(110vh) rotate(${Math.random() * 720}deg)`,
+
+                    opacity: 0
+                }
+            ],
+            {
+                duration,
+
+                easing:
+                    "cubic-bezier(.2,.8,.3,1)"
+            }
+        );
+
+        setTimeout(() => {
+
+            confetti.remove();
+
+        }, duration);
+    }
+}
+
+document
+    .querySelectorAll("input")
+    .forEach(input => {
+
+        input.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key === "Enter"
+                ) {
+
+                    startFlames();
+
+                }
+
+            }
+        );
+    });
+
+let allAdminRecords = [];
+let adminPollInterval = null;
+let canvas, ctx;
+let particles = [];
+let animFrameId = null;
+
+async function openAdminDashboard() {
+    isCalculating = false;
+    const adminScreen = document.getElementById("adminScreen");
+    if (!adminScreen) return;
+
+    adminScreen.style.display = "flex";
+    initAdminCanvas();
+
+    // Instant UI rendering if cached records exist
+    if (allAdminRecords.length > 0) {
+        renderAdminDashboard(allAdminRecords);
+    }
+
+    // Fast asynchronous live fetch
+    fetchAdminRecords();
+
+    // Live Auto-Polling every 2 seconds for instant updates
+    if (adminPollInterval) clearInterval(adminPollInterval);
+    adminPollInterval = setInterval(fetchAdminRecords, 2000);
+}
+
+function toggleAdminFabMenu() {
+    const trigger = document.getElementById("adminSettingsTrigger");
+    const menu = document.getElementById("adminFabMenu");
+    if (!menu) return;
+    const isShowing = menu.classList.toggle("show");
+    if (trigger) trigger.classList.toggle("active", isShowing);
+}
+
+function exitAdminMode() {
+    const adminScreen = document.getElementById("adminScreen");
+    if (adminScreen) adminScreen.style.display = "none";
+    if (adminPollInterval) {
+        clearInterval(adminPollInterval);
+        adminPollInterval = null;
+    }
+    if (animFrameId) {
+        cancelAnimationFrame(animFrameId);
+        animFrameId = null;
+    }
+
+    const menu = document.getElementById("adminFabMenu");
+    if (menu) menu.classList.remove("show");
+    const trigger = document.getElementById("adminSettingsTrigger");
+    if (trigger) trigger.classList.remove("active");
+
+    const n1 = document.getElementById("name1");
+    const n2 = document.getElementById("name2");
+    if (n1) n1.value = "";
+    if (n2) n2.value = "";
+}
+
+async function fetchAdminRecords() {
+    const urls = [
+        "https://flames-ldp2.onrender.com/api/flames/records",
+        `${API_BASE_URL}/flames/records`,
+        "/api/flames/records"
+    ];
+
+    for (const url of urls) {
+        try {
+            const response = await fetch(url);
+            if (response.ok) {
+                const payload = await response.json();
+                if (payload.success && Array.isArray(payload.records)) {
+                    allAdminRecords = payload.records;
+                    renderAdminDashboard(allAdminRecords);
+                    return;
+                }
+            }
+        } catch (err) {
+            // try next endpoint
+        }
+    }
+}
+
+function filterAdminRecords() {
+    const query = (document.getElementById("adminSearchInput")?.value || "").toLowerCase().trim();
+    const filtered = allAdminRecords.filter(r =>
+        (r.name1 || "").toLowerCase().includes(query) ||
+        (r.name2 || "").toLowerCase().includes(query) ||
+        (r.result || "").toLowerCase().includes(query) ||
+        (r.date || "").toLowerCase().includes(query)
+    );
+    renderAdminRecordsList(filtered);
+}
+
+function renderAdminDashboard(records) {
+    const totalEl = document.getElementById("adminTotalRecords");
+    if (totalEl) totalEl.textContent = records.length;
+    
+    const attemptsEl = document.getElementById("adminTotalAttempts");
+    if (attemptsEl) {
+        const totalAttempts = records.reduce((sum, r) => sum + (r.attempts || 1), 0);
+        attemptsEl.textContent = totalAttempts;
+    }
+
+    const query = (document.getElementById("adminSearchInput")?.value || "").trim();
+    if (query) {
+        filterAdminRecords();
+    } else {
+        renderAdminRecordsList(records);
+    }
+}
+
+function formatIndianDateTime(timestamp, dateStr, dayStr) {
+    try {
+        const d = timestamp ? new Date(timestamp) : new Date();
+        if (isNaN(d.getTime())) {
+            return `${dayStr ? dayStr + ", " : ""}${dateStr || ""}`.trim();
+        }
+        const dateFormatted = d.toLocaleDateString("en-IN", {
+            timeZone: "Asia/Kolkata",
+            weekday: "long",
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        });
+        const timeFormatted = d.toLocaleTimeString("en-IN", {
+            timeZone: "Asia/Kolkata",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true
+        });
+        return `${dateFormatted} • ${timeFormatted}`;
+    } catch (e) {
+        return `${dayStr ? dayStr + ", " : ""}${dateStr || ""}`.trim();
+    }
+}
+
+function renderAdminRecordsList(records) {
+    const container = document.getElementById("adminRecordsList");
+    if (!container) return;
+
+    if (!records || records.length === 0) {
+        container.innerHTML = `
+            <div style="text-align:center; padding: 60px; color: rgba(255,255,255,0.6); font-size: 1.1rem;">
+                No love story records in MongoDB Atlas database yet. 📜
+            </div>
+        `;
+        return;
+    }
+
+    let html = `
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Names</th>
+                    <th>Result</th>
+                    <th>Score</th>
+                    <th>Attempts</th>
+                    <th>Date & Time (IST)</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    records.forEach(r => {
+        html += `
+            <tr>
+                <td class="pair-names">${escapeHtml(r.name1)} ❤️ ${escapeHtml(r.name2)}</td>
+                <td><span class="result-tag">${escapeHtml(r.result || "N/A")}</span></td>
+                <td><strong style="color:#ff7eb3;">${r.percentage ?? "N/A"}%</strong></td>
+                <td><span class="attempts-badge">${r.attempts || 1}x</span></td>
+                <td style="font-size:0.83rem; color:rgba(255,255,255,0.8); white-space:nowrap;">${formatIndianDateTime(r.timestamp, r.date, r.day)}</td>
+            </tr>
+        `;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+}
+
+/* --- Password Management --- */
+function openChangePasswordModal() {
+    const modal = document.getElementById("changePasswordModal");
+    if (modal) modal.style.display = "flex";
+}
+
+function closeChangePasswordModal() {
+    const modal = document.getElementById("changePasswordModal");
+    if (modal) modal.style.display = "none";
+    document.getElementById("currentAdminPassInput").value = "";
+    document.getElementById("newAdminPassInput").value = "";
+    document.getElementById("confirmAdminPassInput").value = "";
+}
+
+function saveNewAdminPassword() {
+    const currentPass = document.getElementById("currentAdminPassInput").value;
+    const newPass = document.getElementById("newAdminPassInput").value;
+    const confirmPass = document.getElementById("confirmAdminPassInput").value;
+
+    if (!checkAdminPassword(currentPass)) {
+        alert("Current password is incorrect!");
+        return;
+    }
+    if (!newPass || newPass.length < 4) {
+        alert("New password must be at least 4 characters long!");
+        return;
+    }
+    if (newPass !== confirmPass) {
+        alert("New passwords do not match!");
+        return;
+    }
+
+    localStorage.setItem("flames_admin_password", newPass);
+    alert("🔐 Admin password successfully updated!");
+    closeChangePasswordModal();
+}
+
+/* --- Canvas Particle Animation (Rain + Fire Embers + Swaying Leaves) --- */
+function initAdminCanvas() {
+    canvas = document.getElementById("adminEffectsCanvas");
+    if (!canvas) return;
+    ctx = canvas.getContext("2d");
+    resizeCanvas();
+    window.removeEventListener("resize", resizeCanvas);
+    window.addEventListener("resize", resizeCanvas);
+
+    particles = [];
+    // Raindrops (70)
+    for (let i = 0; i < 70; i++) {
+        particles.push({
+            type: "rain",
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            length: Math.random() * 22 + 10,
+            speed: Math.random() * 12 + 8,
+            opacity: Math.random() * 0.4 + 0.2
+        });
+    }
+
+    // Fiery Embers (45)
+    for (let i = 0; i < 45; i++) {
+        particles.push({
+            type: "ember",
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 3.5 + 1,
+            speedY: Math.random() * -1.5 - 0.5,
+            speedX: Math.random() * 1 - 0.5,
+            opacity: Math.random() * 0.8 + 0.2,
+            color: Math.random() > 0.4 ? "#ff4757" : "#ffa502"
+        });
+    }
+
+    // Swaying Leaves (25)
+    for (let i = 0; i < 25; i++) {
+        particles.push({
+            type: "leaf",
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 6 + 3,
+            speedY: Math.random() * 1 + 0.5,
+            speedX: Math.random() * 2 - 1,
+            rotation: Math.random() * Math.PI * 2,
+            rotSpeed: (Math.random() - 0.5) * 0.05
+        });
+    }
+
+    animateAdminCanvas();
+}
+
+function resizeCanvas() {
+    if (!canvas) return;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+function animateAdminCanvas() {
+    if (!ctx || !canvas) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(p => {
+        if (p.type === "rain") {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(180, 210, 255, ${p.opacity})`;
+            ctx.lineWidth = 1.2;
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p.x - 2, p.y + p.length);
+            ctx.stroke();
+
+            p.y += p.speed;
+            p.x -= 0.5;
+            if (p.y > canvas.height) {
+                p.y = -20;
+                p.x = Math.random() * canvas.width;
+            }
+        } else if (p.type === "ember") {
+            ctx.beginPath();
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = p.opacity;
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+
+            p.y += p.speedY;
+            p.x += p.speedX;
+            if (p.y < -10) {
+                p.y = canvas.height + 10;
+                p.x = Math.random() * canvas.width;
+            }
+        } else if (p.type === "leaf") {
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rotation);
+            ctx.fillStyle = "rgba(140, 25, 45, 0.75)";
+            ctx.beginPath();
+            ctx.ellipse(0, 0, p.size, p.size / 2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            p.y += p.speedY;
+            p.x += Math.sin(p.y * 0.02) * p.speedX;
+            p.rotation += p.rotSpeed;
+            if (p.y > canvas.height + 10) {
+                p.y = -10;
+                p.x = Math.random() * canvas.width;
+            }
+        }
+    });
+
+    animFrameId = requestAnimationFrame(animateAdminCanvas);
+}
+
+function escapeHtml(str) {
+    return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+}
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        closeChangePasswordModal();
+        exitAdminMode();
+    }
+});
+
+</script>
+
+<!-- =========================
+     FULL-SCREEN ADMIN PORTAL
+========================= -->
+<div id="adminScreen" class="admin-screen" style="display: none;">
+    <!-- Particle Canvas: Rain + Fiery Embers + Swaying Leaves -->
+    <canvas id="adminEffectsCanvas" class="admin-canvas"></canvas>
+
+    <div class="admin-screen-content">
+        <!-- Main Card: Search & Live Table -->
+        <div class="admin-main-card">
+            <div class="admin-search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="adminSearchInput" placeholder="Search by name, result, date..." oninput="filterAdminRecords()">
+                <span class="refresh-indicator">MongoDB Atlas Live</span>
+            </div>
+
+            <div class="admin-table-scroll" id="adminRecordsList">
+                <!-- Dynamic Live Records Table -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Translucent Settings on Bottom Right -->
+    <div class="admin-floating-settings">
+        <button id="adminSettingsTrigger" class="admin-fab-btn" onclick="toggleAdminFabMenu()" title="Settings">
+            ⚙️
+        </button>
+        <div id="adminFabMenu" class="admin-fab-menu">
+            <!-- Change Password Action (Key Symbol) -->
+            <button class="admin-fab-action key-btn" onclick="openChangePasswordModal()" title="Change Password">
+                🔑
+                <span class="admin-fab-tooltip">Change Password</span>
+            </button>
+            <!-- Exit Admin Action (Door Symbol) -->
+            <button class="admin-fab-action door-btn" onclick="exitAdminMode()" title="Exit Admin">
+                🚪
+                <span class="admin-fab-tooltip">Exit Admin</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- =========================
+     CHANGE PASSWORD MODAL
+========================= -->
+<div id="changePasswordModal" class="password-modal" style="display: none;">
+    <div class="password-modal-card">
+        <h3>🔐 Change Admin Password</h3>
+        <p>Set a new secret password for Admin Mode access.</p>
+
+        <div class="modal-input-group">
+            <label>Current Password</label>
+            <input type="password" id="currentAdminPassInput" placeholder="Enter current password...">
+        </div>
+
+        <div class="modal-input-group">
+            <label>New Password</label>
+            <input type="password" id="newAdminPassInput" placeholder="Enter new password...">
+        </div>
+
+        <div class="modal-input-group">
+            <label>Confirm New Password</label>
+            <input type="password" id="confirmAdminPassInput" placeholder="Confirm new password...">
+        </div>
+
+        <div class="modal-btn-row">
+            <button class="modal-cancel-btn" onclick="closeChangePasswordModal()">Cancel</button>
+            <button class="modal-save-btn" onclick="saveNewAdminPassword()">Save New Password</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

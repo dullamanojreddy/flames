@@ -1,0 +1,30 @@
+{
+    "name": "flames-backend",
+    "version": "1.0.0",
+    "description": "Production-ready REST API backend for the FLAMES love calculator. Stores minimal calculation history in MongoDB.",
+    "main": "src/server.js",
+    "scripts": {
+        "start": "node src/server.js",
+        "dev": "nodemon src/server.js",
+        "test": "node --test \"test/*.test.js\""
+    },
+    "keywords": [
+        "flames",
+        "love",
+        "calculator",
+        "express",
+        "mongoose"
+    ],
+    "license": "MIT",
+    "dependencies": {
+        "cors": "^2.8.6",
+        "dotenv": "^16.6.1",
+        "express": "^4.22.2",
+        "express-rate-limit": "^7.5.1",
+        "helmet": "^7.2.0",
+        "mongoose": "^8.24.4"
+    },
+    "devDependencies": {
+        "nodemon": "^3.1.14"
+    }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "flames-application",
+  "version": "1.0.0",
+  "description": "FLAMES Love Calculator with MongoDB Atlas backend",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node backend/src/server.js",
+    "dev": "node backend/src/server.js",
+    "test": "cd backend && npm test"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "mongoose": "^8.9.5"
+  }
+}
