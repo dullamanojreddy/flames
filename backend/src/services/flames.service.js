@@ -163,6 +163,7 @@ async function getAllHistoryRecords(deps = {}) {
     const model = deps.flamesModel || FlamesResult;
     const docs = await model.find().sort({ updatedAt: -1, createdAt: -1 }).lean();
     return docs.map(doc => ({
+        id: doc._id ? String(doc._id) : undefined,
         name1: doc.name1,
         name2: doc.name2,
         result: doc.result,
@@ -317,6 +318,35 @@ function serialize(doc, resultLetter) {
     };
 }
 
+/**
+ * Delete a history record by ID or by name pair.
+ *
+ * @param {{ id?: string, name1?: string, name2?: string }} query
+ * @param {object} deps Optional dependency overrides (used by tests).
+ * @returns {Promise<boolean>} True if record was found and deleted, false otherwise.
+ */
+async function deleteHistoryRecord(query = {}, deps = {}) {
+    const model = deps.flamesModel || FlamesResult;
+    const { id, name1, name2 } = query;
+
+    if (id && typeof id === "string" && (id.match(/^[0-9a-fA-F]{24}$/) || id.length > 0)) {
+        if (typeof model.findByIdAndDelete === "function") {
+            const deleted = await model.findByIdAndDelete(id);
+            if (deleted) return true;
+        }
+    }
+
+    if (name1 && name2) {
+        const normalizedPair = createNormalizedPair(name1, name2);
+        if (typeof model.findOneAndDelete === "function") {
+            const deleted = await model.findOneAndDelete({ normalizedPair });
+            if (deleted) return true;
+        }
+    }
+
+    return false;
+}
+
 module.exports = {
     normalizeName,
     createNormalizedPair,
@@ -326,5 +356,6 @@ module.exports = {
     getCurrentDateDetails,
     RESULT_MAP,
     persistFlamesResult,
-    getAllHistoryRecords
+    getAllHistoryRecords,
+    deleteHistoryRecord
 };

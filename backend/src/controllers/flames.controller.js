@@ -3,7 +3,7 @@
  * Controller: read body/params -> call service -> shape response -> next on error.
  */
 
-const { persistFlamesResult, getAllHistoryRecords } = require("../services/flames.service");
+const { persistFlamesResult, getAllHistoryRecords, deleteHistoryRecord } = require("../services/flames.service");
 
 /**
  * Handle POST /api/flames/calculate
@@ -54,7 +54,45 @@ async function getRecordsController(req, res, next) {
     }
 }
 
+/**
+ * Handle DELETE /api/flames/records and /api/flames/records/:id
+ *
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @param {express.NextFunction} next
+ */
+async function deleteRecordController(req, res, next) {
+    try {
+        const id = req.params.id || req.query.id || req.body?.id;
+        const name1 = req.query.name1 || req.body?.name1;
+        const name2 = req.query.name2 || req.body?.name2;
+
+        if (!id && (!name1 || !name2)) {
+            return res.status(400).json({
+                success: false,
+                message: "Missing id or name pair to delete"
+            });
+        }
+
+        const deleted = await deleteHistoryRecord({ id, name1, name2 });
+        if (!deleted) {
+            return res.status(404).json({
+                success: false,
+                message: "Record not found or already deleted"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Record deleted successfully"
+        });
+    } catch (err) {
+        return next(err);
+    }
+}
+
 module.exports = {
     calculateFlamesController,
-    getRecordsController
+    getRecordsController,
+    deleteRecordController
 };

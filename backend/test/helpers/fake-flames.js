@@ -94,6 +94,33 @@ class FakeFlamesModel {
         return { ...doc };
     }
 
+    findByIdAndDelete(id) {
+        for (const [key, doc] of this.store.entries()) {
+            if (doc._id && String(doc._id) === String(id)) {
+                this.store.delete(key);
+                return { ...doc };
+            }
+        }
+        return null;
+    }
+
+    findOneAndDelete(query) {
+        const key = query.normalizedPair;
+        if (!this.store.has(key)) return null;
+        const doc = this.store.get(key);
+        this.store.delete(key);
+        return { ...doc };
+    }
+
+    find() {
+        const allItems = [...this.store.values()];
+        return {
+            sort: () => ({
+                lean: async () => allItems
+            })
+        };
+    }
+
     count() {
         return this.store.size;
     }

@@ -215,3 +215,16 @@ test("date utils produce DD-MM-YYYY, weekday name and numeric year", () => {
     assert.equal(details.day, "Tuesday");
     assert.ok(details.timestamp instanceof Date);
 });
+
+test("deleteHistoryRecord deletes record by name pair", async () => {
+    const model = new FakeFlamesModel();
+    await service.persistFlamesResult({ name1: "Romeo", name2: "Juliet" }, { flamesModel: model });
+    assert.equal(model.count(), 1);
+
+    const deleted = await service.deleteHistoryRecord({ name1: "Romeo", name2: "Juliet" }, { flamesModel: model });
+    assert.equal(deleted, true);
+    assert.equal(model.count(), 0);
+
+    const deleteAgain = await service.deleteHistoryRecord({ name1: "Romeo", name2: "Juliet" }, { flamesModel: model });
+    assert.equal(deleteAgain, false);
+});

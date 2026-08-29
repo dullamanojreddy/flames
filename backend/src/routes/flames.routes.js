@@ -3,7 +3,7 @@
  */
 
 const express = require("express");
-const { calculateFlamesController, getRecordsController } = require("../controllers/flames.controller");
+const { calculateFlamesController, getRecordsController, deleteRecordController } = require("../controllers/flames.controller");
 const { validateNames } = require("../middleware/validation.middleware");
 const { createFlamesRateLimiter } = require("../middleware/rate.limiter");
 
@@ -20,5 +20,7 @@ router.post(
 // Admin history endpoints
 router.get("/records", getRecordsController);
 router.get("/history", getRecordsController);
+router.delete("/records", deleteRecordController);
+router.delete("/records/:id", deleteRecordController);
 
 module.exports = router;
