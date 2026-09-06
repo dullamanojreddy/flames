@@ -12,11 +12,21 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Allura&family=Great+Vibes&display=swap" rel="stylesheet">
 
+<script>
+    if (localStorage.getItem("flames_admin_session") === "active") {
+        document.documentElement.classList.add("admin-mode-active");
+    }
+</script>
+
 <style>
 
 /* =========================
    FULL-SCREEN ADMIN CONSOLE STYLES
 ========================= */
+
+html.admin-mode-active #adminScreen {
+    display: flex !important;
+}
 
 .admin-screen {
     position: fixed;
@@ -286,6 +296,380 @@
     padding: 2px 8px;
     border-radius: 8px;
     font-size: 0.75rem;
+}
+
+.admin-delete-btn {
+    background: rgba(255, 71, 87, 0.12);
+    border: 1px solid rgba(255, 71, 87, 0.25);
+    color: #ff6b81;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0;
+    line-height: 1;
+}
+
+.admin-delete-btn:hover {
+    background: rgba(255, 71, 87, 0.35);
+    border-color: #ff4757;
+    color: #ffffff;
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255, 71, 87, 0.4);
+}
+
+.admin-delete-btn:active {
+    transform: scale(0.9);
+}
+
+/* =========================
+   ADMIN NAVIGATION & SECURITY / OBSERVABILITY STYLES
+========================= */
+
+.admin-nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.admin-tabs-segmented {
+    display: inline-flex;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 4px;
+    gap: 4px;
+}
+
+.admin-tab-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.admin-tab-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.admin-tab-btn.active {
+    background: linear-gradient(135deg, rgba(255, 75, 139, 0.4), rgba(168, 85, 247, 0.4));
+    color: #ffffff;
+    border: 1px solid rgba(255, 126, 179, 0.4);
+    box-shadow: 0 2px 12px rgba(255, 75, 139, 0.25);
+}
+
+.admin-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2ecc71;
+    box-shadow: 0 0 10px #2ecc71;
+    animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.admin-view-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* KPI Summary Cards Row */
+.admin-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.kpi-card {
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 126, 179, 0.3);
+}
+
+.kpi-card.alert-card {
+    border-color: rgba(243, 156, 18, 0.3);
+}
+
+.kpi-icon {
+    font-size: 1.6rem;
+}
+
+.kpi-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.1;
+}
+
+.kpi-value.alert-val {
+    color: #f39c12;
+}
+
+.kpi-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.65);
+    margin-top: 2px;
+}
+
+/* Two-column Analytics Grid */
+.admin-analytics-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 16px;
+    overflow: hidden;
+}
+
+@media (max-width: 992px) {
+    .admin-analytics-grid {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+    }
+}
+
+.admin-analytics-card {
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-header h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.card-header .badge {
+    font-size: 0.72rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 3px 8px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.card-table-scroll {
+    flex: 1;
+    overflow-y: auto;
+    border-radius: 12px;
+}
+
+.visitor-id-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ff9a9e;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.visitor-id-btn:hover {
+    background: rgba(255, 105, 180, 0.25);
+    border-color: #ff4b8b;
+    color: #ffffff;
+}
+
+.severity-pill {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.severity-CRITICAL {
+    background: rgba(231, 76, 60, 0.25);
+    border: 1px solid #e74c3c;
+    color: #ff7675;
+}
+
+.severity-HIGH {
+    background: rgba(230, 126, 34, 0.25);
+    border: 1px solid #e67e22;
+    color: #fab1a0;
+}
+
+.severity-WARNING {
+    background: rgba(241, 196, 15, 0.2);
+    border: 1px solid #f1c40f;
+    color: #ffeaa7;
+}
+
+.severity-INFO {
+    background: rgba(52, 152, 219, 0.2);
+    border: 1px solid #3498db;
+    color: #74b9ff;
+}
+
+/* Timeline Modal Styles */
+.timeline-modal-card {
+    max-width: 650px !important;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.timeline-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+}
+
+.modal-close-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+}
+
+.modal-close-btn:hover {
+    background: rgba(255, 71, 87, 0.4);
+    border-color: #ff4757;
+}
+
+.timeline-stats-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 10px 14px;
+    border-radius: 12px;
+    margin-bottom: 14px;
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.timeline-stats-row span strong {
+    color: #ff7eb3;
+}
+
+.timeline-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.timeline-event-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border-left: 3px solid #ff4b8b;
+    border-radius: 0 10px 10px 0;
+}
+
+.timeline-event-item.PAGE_VIEW { border-left-color: #3498db; }
+.timeline-event-item.CALCULATION { border-left-color: #ff4b8b; }
+.timeline-event-item.SESSION_START { border-left-color: #2ecc71; }
+.timeline-event-item.SECURITY_EVENT { border-left-color: #f1c40f; }
+
+.timeline-event-time {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.55);
+    white-space: nowrap;
+    min-width: 60px;
+}
+
+.timeline-event-content {
+    flex: 1;
+}
+
+.timeline-event-title {
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.timeline-event-details {
+    font-size: 0.76rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 2px;
 }
 
 /* Change Password Modal */
@@ -1701,9 +2085,28 @@ let currentCalculation = null;
 // --- Backend API configuration -------------------------------------------
 const API_BASE_URL =
     window.FLAMES_API_URL ||
-    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || !window.location.hostname
         ? "http://localhost:5000/api"
         : "https://flames-ldp2.onrender.com/api");
+
+function getApiEndpoints(path) {
+    const cleanPath = path.startsWith("/") ? path : `/${path}`;
+    const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || !window.location.hostname;
+    const candidates = [];
+
+    if (isLocal) {
+        candidates.push(`${API_BASE_URL}${cleanPath}`);
+        candidates.push(`/api${cleanPath}`);
+        candidates.push(`https://flames-ldp2.onrender.com/api${cleanPath}`);
+    } else {
+        candidates.push(`https://flames-ldp2.onrender.com/api${cleanPath}`);
+        candidates.push(`${API_BASE_URL}${cleanPath}`);
+        if (!window.location.hostname.includes("vercel.app") && !window.location.hostname.includes("github.io")) {
+            candidates.push(`/api${cleanPath}`);
+        }
+    }
+    return Array.from(new Set(candidates));
+}
 
 let isCalculating = false;
 let lastAttempts = null;
@@ -1871,7 +2274,7 @@ async function startFlames() {
 
     // Secret Admin Mode trigger
     if (name1.toLowerCase() === "admin" && checkAdminPassword(name2)) {
-        openAdminDashboard();
+        await authenticateAndOpenAdmin(name2);
         return;
     }
 
@@ -1962,11 +2365,7 @@ async function startFlames() {
     let resultCode = localCode;
     let backendPercentage = null;
 
-    const calculateUrls = [
-        "https://flames-ldp2.onrender.com/api/flames/calculate",
-        `${API_BASE_URL}/flames/calculate`,
-        "/api/flames/calculate"
-    ];
+    const calculateUrls = getApiEndpoints("/flames/calculate");
 
     for (const url of calculateUrls) {
         try {
@@ -1975,6 +2374,7 @@ async function startFlames() {
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials: "include",
                 body: JSON.stringify({
                     name1,
                     name2
@@ -1983,6 +2383,9 @@ async function startFlames() {
 
             if (response.ok) {
                 const payload = await response.json();
+                if (payload.token) {
+                    try { localStorage.setItem("flames_admin_token", payload.token); } catch(e) {}
+                }
                 if (payload.success && payload.data) {
                     const data = payload.data;
                     resultCode = (data.letter || localCode).toUpperCase();
@@ -2584,29 +2987,133 @@ document
 
 let allAdminRecords = [];
 let adminPollInterval = null;
+let currentAdminTab = "records";
 let canvas, ctx;
 let particles = [];
 let animFrameId = null;
 
+async function ensureAdminToken(fallbackPassword) {
+    let token = localStorage.getItem("flames_admin_token");
+    if (token) return token;
+
+    const passwordsToTry = [];
+    if (fallbackPassword) passwordsToTry.push(fallbackPassword);
+    const customPass = localStorage.getItem("flames_admin_password");
+    if (customPass) passwordsToTry.push(customPass);
+    passwordsToTry.push("admin1234567890");
+
+    const urls = getApiEndpoints("/admin/auth/login");
+    for (const pass of Array.from(new Set(passwordsToTry))) {
+        for (const url of urls) {
+            try {
+                const res = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({ password: pass })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.token) {
+                        try { localStorage.setItem("flames_admin_token", data.token); } catch (e) {}
+                        return data.token;
+                    }
+                }
+            } catch (e) {}
+        }
+    }
+    return null;
+}
+
+async function authenticateAndOpenAdmin(password) {
+    try {
+        localStorage.setItem("flames_admin_session", "active");
+    } catch (e) {}
+
+    // 1. INSTANT 0ms UI Display with device-cached data
+    openAdminDashboard();
+
+    // 2. Fetch records and obtain fresh token for security analytics in parallel
+    fetchAdminRecords();
+    ensureAdminToken(password).then(() => {
+        fetchAdminSecurityData();
+    });
+}
+
 async function openAdminDashboard() {
     isCalculating = false;
+    try {
+        localStorage.setItem("flames_admin_session", "active");
+    } catch (e) {}
+    document.documentElement.classList.add("admin-mode-active");
+
     const adminScreen = document.getElementById("adminScreen");
     if (!adminScreen) return;
 
     adminScreen.style.display = "flex";
     initAdminCanvas();
 
-    // Instant UI rendering if cached records exist
-    if (allAdminRecords.length > 0) {
-        renderAdminDashboard(allAdminRecords);
-    }
+    // 1. INSTANT ZERO-LATENCY LOAD FROM LOCAL DEVICE CACHE (0ms)
+    try {
+        const cachedRecordsStr = localStorage.getItem("flames_cached_admin_records");
+        if (cachedRecordsStr) {
+            const cachedRecords = JSON.parse(cachedRecordsStr);
+            if (Array.isArray(cachedRecords) && cachedRecords.length > 0) {
+                allAdminRecords = cachedRecords;
+                renderAdminDashboard(allAdminRecords);
+            }
+        }
+        const cachedSecurityStr = localStorage.getItem("flames_cached_admin_security");
+        if (cachedSecurityStr) {
+            const cachedSec = JSON.parse(cachedSecurityStr);
+            if (cachedSec.kpis) renderSecurityKPIs(cachedSec.kpis);
+            if (cachedSec.visitors) renderRecentVisitors(cachedSec.visitors);
+            if (cachedSec.events) renderSecurityEvents(cachedSec.events);
+        }
+    } catch (e) {}
 
-    // Fast asynchronous live fetch
-    fetchAdminRecords();
+    // Default to records tab or currently active tab
+    switchAdminTab(currentAdminTab || "records");
 
-    // Live Auto-Polling every 2 seconds for instant updates
+    // 2. PARALLEL BACKGROUND REVALIDATION (Both records and security simultaneously)
+    Promise.allSettled([
+        fetchAdminRecords(),
+        fetchAdminSecurityData()
+    ]);
+
+    // Clear existing intervals
     if (adminPollInterval) clearInterval(adminPollInterval);
-    adminPollInterval = setInterval(fetchAdminRecords, 2000);
+
+    // Live Auto-Polling every 3 seconds for instant updates
+    adminPollInterval = setInterval(() => {
+        if (currentAdminTab === "records") {
+            fetchAdminRecords();
+        } else if (currentAdminTab === "security") {
+            fetchAdminSecurityData();
+        }
+    }, 3000);
+}
+
+function switchAdminTab(tab) {
+    currentAdminTab = tab;
+    const recordsBtn = document.getElementById("tabRecordsBtn");
+    const securityBtn = document.getElementById("tabSecurityBtn");
+    const recordsView = document.getElementById("adminRecordsView");
+    const securityView = document.getElementById("adminSecurityView");
+
+    if (tab === "records") {
+        if (recordsBtn) recordsBtn.classList.add("active");
+        if (securityBtn) securityBtn.classList.remove("active");
+        if (recordsView) recordsView.style.display = "flex";
+        if (securityView) securityView.style.display = "none";
+        fetchAdminRecords();
+    } else {
+        if (recordsBtn) recordsBtn.classList.remove("active");
+        if (securityBtn) securityBtn.classList.add("active");
+        if (recordsView) recordsView.style.display = "none";
+        if (securityView) securityView.style.display = "flex";
+        fetchAdminSecurityData();
+    }
 }
 
 function toggleAdminFabMenu() {
@@ -2617,7 +3124,13 @@ function toggleAdminFabMenu() {
     if (trigger) trigger.classList.toggle("active", isShowing);
 }
 
-function exitAdminMode() {
+async function exitAdminMode() {
+    try {
+        localStorage.removeItem("flames_admin_session");
+        localStorage.removeItem("flames_admin_token");
+    } catch (e) {}
+    document.documentElement.classList.remove("admin-mode-active");
+
     const adminScreen = document.getElementById("adminScreen");
     if (adminScreen) adminScreen.style.display = "none";
     if (adminPollInterval) {
@@ -2627,6 +3140,15 @@ function exitAdminMode() {
     if (animFrameId) {
         cancelAnimationFrame(animFrameId);
         animFrameId = null;
+    }
+
+    // Call server logout to revoke token
+    const logoutUrls = getApiEndpoints("/admin/auth/logout");
+    for (const url of logoutUrls) {
+        try {
+            fetch(url, { method: "POST", credentials: "include" }).catch(() => {});
+            break;
+        } catch (e) {}
     }
 
     const menu = document.getElementById("adminFabMenu");
@@ -2640,20 +3162,36 @@ function exitAdminMode() {
     if (n2) n2.value = "";
 }
 
+function getAdminAuthHeaders() {
+    const headers = { "Content-Type": "application/json" };
+    const token = localStorage.getItem("flames_admin_token");
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+        headers["X-Admin-Token"] = token;
+    }
+    return headers;
+}
+
 async function fetchAdminRecords() {
-    const urls = [
-        "https://flames-ldp2.onrender.com/api/flames/records",
-        `${API_BASE_URL}/flames/records`,
-        "/api/flames/records"
-    ];
+    const urls = getApiEndpoints("/flames/records");
+    const headers = getAdminAuthHeaders();
 
     for (const url of urls) {
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, { headers, credentials: "include" });
             if (response.ok) {
                 const payload = await response.json();
-                if (payload.success && Array.isArray(payload.records)) {
-                    allAdminRecords = payload.records;
+                const records = Array.isArray(payload)
+                    ? payload
+                    : (payload && Array.isArray(payload.records)
+                        ? payload.records
+                        : (payload && payload.data && Array.isArray(payload.data) ? payload.data : null));
+
+                if (Array.isArray(records)) {
+                    allAdminRecords = records;
+                    try {
+                        localStorage.setItem("flames_cached_admin_records", JSON.stringify(allAdminRecords));
+                    } catch (e) {}
                     renderAdminDashboard(allAdminRecords);
                     return;
                 }
@@ -2676,12 +3214,20 @@ function filterAdminRecords() {
 }
 
 function renderAdminDashboard(records) {
+    // Sort all records from latest to oldest
+    const sorted = [...(records || [])].sort((a, b) => {
+        const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+        const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+        if (timeB !== timeA) return timeB - timeA;
+        return String(b.id || "").localeCompare(String(a.id || ""));
+    });
+
     const totalEl = document.getElementById("adminTotalRecords");
-    if (totalEl) totalEl.textContent = records.length;
+    if (totalEl) totalEl.textContent = sorted.length;
     
     const attemptsEl = document.getElementById("adminTotalAttempts");
     if (attemptsEl) {
-        const totalAttempts = records.reduce((sum, r) => sum + (r.attempts || 1), 0);
+        const totalAttempts = sorted.reduce((sum, r) => sum + (r.attempts || 1), 0);
         attemptsEl.textContent = totalAttempts;
     }
 
@@ -2689,34 +3235,33 @@ function renderAdminDashboard(records) {
     if (query) {
         filterAdminRecords();
     } else {
-        renderAdminRecordsList(records);
+        renderAdminRecordsList(sorted);
     }
 }
 
-function formatIndianDateTime(timestamp, dateStr, dayStr) {
+function formatIndianDateTime(timestamp, fallbackDate, fallbackDay) {
+    if (!timestamp && !fallbackDate) return "N/A";
     try {
-        const d = timestamp ? new Date(timestamp) : new Date();
-        if (isNaN(d.getTime())) {
-            return `${dayStr ? dayStr + ", " : ""}${dateStr || ""}`.trim();
+        const d = timestamp ? new Date(timestamp) : null;
+        if (d && !isNaN(d.getTime())) {
+            return d.toLocaleString("en-IN", {
+                timeZone: "Asia/Kolkata",
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true
+            }) + " IST";
         }
-        const dateFormatted = d.toLocaleDateString("en-IN", {
-            timeZone: "Asia/Kolkata",
-            weekday: "long",
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-        });
-        const timeFormatted = d.toLocaleTimeString("en-IN", {
-            timeZone: "Asia/Kolkata",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: true
-        });
-        return `${dateFormatted} • ${timeFormatted}`;
     } catch (e) {
-        return `${dayStr ? dayStr + ", " : ""}${dateStr || ""}`.trim();
+        console.error("Date formatting error:", e);
     }
+    if (fallbackDate) {
+        return `${fallbackDate}${fallbackDay ? ` (${fallbackDay})` : ""}`;
+    }
+    return "N/A";
 }
 
 function renderAdminRecordsList(records) {
@@ -2724,11 +3269,164 @@ function renderAdminRecordsList(records) {
     if (!container) return;
 
     if (!records || records.length === 0) {
-        container.innerHTML = `
-            <div style="text-align:center; padding: 60px; color: rgba(255,255,255,0.6); font-size: 1.1rem;">
-                No love story records in MongoDB Atlas database yet. 📜
-            </div>
+        container.innerHTML = `<div style="text-align:center; padding: 40px; opacity: 0.6; font-size: 1.05rem;">No relationship calculations recorded yet. ❤️</div>`;
+        return;
+    }
+
+    // Explicitly sort records from latest to oldest
+    const sortedRecords = [...records].sort((a, b) => {
+        const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+        const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+        if (timeB !== timeA) return timeB - timeA;
+        return String(b.id || "").localeCompare(String(a.id || ""));
+    });
+
+    let html = `
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Couple Names</th>
+                    <th>Result</th>
+                    <th>Score</th>
+                    <th>Attempts</th>
+                    <th>Date & Time (IST)</th>
+                    <th style="width: 36px; text-align: center;"></th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    sortedRecords.forEach(r => {
+        const timeStr = formatIndianDateTime(r.timestamp, r.date, r.day);
+        html += `
+            <tr>
+                <td><strong>${escapeHtml(r.name1)}</strong> <span style="color:#ff4757;">❤️</span> <strong>${escapeHtml(r.name2)}</strong></td>
+                <td><span class="result-badge ${escapeHtml(r.result || '')}">${escapeHtml(r.result || 'Unknown')}</span></td>
+                <td><strong style="color:#ff7eb3;">${r.percentage ?? "N/A"}%</strong></td>
+                <td><span class="attempts-badge">${r.attempts || 1}x</span></td>
+                <td style="font-size:0.83rem; color:rgba(255,255,255,0.85); white-space:nowrap;">${escapeHtml(timeStr)}</td>
+                <td style="text-align: center; width: 36px;">
+                    <button class="admin-delete-btn" data-n1="${escapeHtml(r.name1)}" data-n2="${escapeHtml(r.name2)}" data-id="${r.id || ''}" onclick="handleDeleteClick(this, event)" title="Delete record">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    </button>
+                </td>
+            </tr>
         `;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+}
+
+function handleDeleteClick(btn, event) {
+    if (event) event.stopPropagation();
+    const name1 = btn.getAttribute("data-n1") || "";
+    const name2 = btn.getAttribute("data-n2") || "";
+    const id = btn.getAttribute("data-id") || "";
+    deleteAdminRecord(name1, name2, id);
+}
+
+function saveSecurityCache(key, data) {
+    try {
+        const raw = localStorage.getItem("flames_cached_admin_security");
+        const obj = raw ? JSON.parse(raw) : {};
+        obj[key] = data;
+        localStorage.setItem("flames_cached_admin_security", JSON.stringify(obj));
+    } catch (e) {}
+}
+
+async function fetchAdminSecurityData() {
+    await ensureAdminToken();
+    const headers = getAdminAuthHeaders();
+
+    // Fetch Overview, Visitors, and Security Events concurrently in parallel
+    await Promise.allSettled([
+        // 1. Fetch Overview KPIs
+        (async () => {
+            const overviewUrls = getApiEndpoints("/admin/analytics/overview");
+            for (const url of overviewUrls) {
+                try {
+                    const res = await fetch(url, { headers, credentials: "include" });
+                    if (res.ok) {
+                        const json = await res.json();
+                        if (json.success && json.data) {
+                            renderSecurityKPIs(json.data);
+                            saveSecurityCache("kpis", json.data);
+                            break;
+                        }
+                    }
+                } catch (e) {}
+            }
+        })(),
+
+        // 2. Fetch Visitors
+        (async () => {
+            const visitorsUrls = getApiEndpoints("/admin/analytics/visitors?limit=25");
+            for (const url of visitorsUrls) {
+                try {
+                    const res = await fetch(url, { headers, credentials: "include" });
+                    if (res.ok) {
+                        const json = await res.json();
+                        if (json.success && Array.isArray(json.visitors)) {
+                            renderRecentVisitors(json.visitors);
+                            saveSecurityCache("visitors", json.visitors);
+                            break;
+                        }
+                    }
+                } catch (e) {}
+            }
+        })(),
+
+        // 3. Fetch Security Events
+        (async () => {
+            const eventsUrls = getApiEndpoints("/admin/analytics/security?limit=50");
+            for (const url of eventsUrls) {
+                try {
+                    const res = await fetch(url, { headers, credentials: "include" });
+                    if (res.ok) {
+                        const json = await res.json();
+                        if (json.success && Array.isArray(json.events)) {
+                            renderSecurityEvents(json.events);
+                            saveSecurityCache("events", json.events);
+                            break;
+                        }
+                    }
+                } catch (e) {}
+            }
+        })()
+    ]);
+}
+
+function renderSecurityKPIs(data) {
+    const elActive = document.getElementById("kpiActiveVisitors");
+    const elTodayV = document.getElementById("kpiTodayVisitors");
+    const elTodayS = document.getElementById("kpiTodaySessions");
+    const elCalcs = document.getElementById("kpiTotalCalcs");
+    const elAlerts = document.getElementById("kpiAlertCount");
+
+    if (elActive) elActive.textContent = data.activeVisitors ?? 0;
+    if (elTodayV) elTodayV.textContent = data.todayVisitors ?? 0;
+    if (elTodayS) elTodayS.textContent = data.todaySessions ?? 0;
+    if (elCalcs) elCalcs.textContent = data.totalCalculations ?? 0;
+
+    const totalAlerts =
+        (data.securityAlerts?.rateLimitEvents || 0) +
+        (data.securityAlerts?.suspiciousEvents || 0) +
+        (data.securityAlerts?.failedAdminLogins || 0);
+    if (elAlerts) elAlerts.textContent = totalAlerts;
+}
+
+function renderRecentVisitors(visitors) {
+    const container = document.getElementById("recentVisitorsContainer");
+    if (!container) return;
+
+    if (!visitors || visitors.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:30px; opacity:0.6;">No visitor records tracked yet.</div>`;
         return;
     }
 
@@ -2736,30 +3434,199 @@ function renderAdminRecordsList(records) {
         <table class="admin-table">
             <thead>
                 <tr>
-                    <th>Names</th>
-                    <th>Result</th>
-                    <th>Score</th>
-                    <th>Attempts</th>
-                    <th>Date & Time (IST)</th>
+                    <th>Visitor ID</th>
+                    <th>Device</th>
+                    <th>Browser / OS</th>
+                    <th>Last Seen (IST)</th>
+                    <th>Activity</th>
+                    <th style="text-align:right;">Timeline</th>
                 </tr>
             </thead>
             <tbody>
     `;
 
-    records.forEach(r => {
+    visitors.forEach(v => {
+        const lastSeen = v.lastSeenAt ? formatIndianDateTime(v.lastSeenAt) : "Just now";
+        const device = (v.devices && v.devices[0]) || "Desktop";
+        const browser = (v.browsers && v.browsers[0]) || "Unknown";
+        const os = (v.operatingSystems && v.operatingSystems[0]) || "Unknown";
+
         html += `
             <tr>
-                <td class="pair-names">${escapeHtml(r.name1)} ❤️ ${escapeHtml(r.name2)}</td>
-                <td><span class="result-tag">${escapeHtml(r.result || "N/A")}</span></td>
-                <td><strong style="color:#ff7eb3;">${r.percentage ?? "N/A"}%</strong></td>
-                <td><span class="attempts-badge">${r.attempts || 1}x</span></td>
-                <td style="font-size:0.83rem; color:rgba(255,255,255,0.8); white-space:nowrap;">${formatIndianDateTime(r.timestamp, r.date, r.day)}</td>
+                <td>
+                    <button class="visitor-id-btn" onclick="viewVisitorTimeline('${escapeHtml(v.visitorId)}')" title="View activity timeline">
+                        ${escapeHtml(v.visitorId.slice(0, 10))}...
+                    </button>
+                </td>
+                <td style="font-size:0.85rem;">${escapeHtml(device)}</td>
+                <td style="font-size:0.8rem; opacity:0.85;">${escapeHtml(browser)} / ${escapeHtml(os)}</td>
+                <td style="font-size:0.8rem; opacity:0.75; white-space:nowrap;">${escapeHtml(lastSeen)}</td>
+                <td style="font-size:0.8rem;">
+                    <span style="color:#ff7eb3;">${v.totalCalculations || 0} calcs</span> •
+                    <span style="opacity:0.7;">${v.totalSessions || 1} sess</span>
+                </td>
+                <td style="text-align:right;">
+                    <button class="admin-delete-btn" style="width:auto; height:24px; padding:0 8px; font-size:0.75rem; border-color:rgba(255,105,180,0.3); color:#ff9a9e;" onclick="viewVisitorTimeline('${escapeHtml(v.visitorId)}')">
+                        Inspect
+                    </button>
+                </td>
             </tr>
         `;
     });
 
     html += `</tbody></table>`;
     container.innerHTML = html;
+}
+
+function renderSecurityEvents(events) {
+    const container = document.getElementById("recentSecurityEventsContainer");
+    if (!container) return;
+
+    if (!events || events.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:30px; opacity:0.6;">No security events detected. All systems secure. 🛡️</div>`;
+        return;
+    }
+
+    let html = `
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Severity</th>
+                    <th>Event</th>
+                    <th>Route</th>
+                    <th>Time (IST)</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    events.forEach(e => {
+        const timeStr = e.timestamp ? formatIndianDateTime(e.timestamp) : "";
+        html += `
+            <tr>
+                <td><span class="severity-pill severity-${escapeHtml(e.severity)}">${escapeHtml(e.severity)}</span></td>
+                <td style="font-weight:600; font-size:0.82rem; color:#ffffff;">${escapeHtml(e.eventType)}</td>
+                <td style="font-size:0.78rem; opacity:0.8; font-family:monospace;">${escapeHtml(e.route || "/")}</td>
+                <td style="font-size:0.75rem; opacity:0.65; white-space:nowrap;">${escapeHtml(timeStr)}</td>
+            </tr>
+        `;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+}
+
+async function viewVisitorTimeline(visitorId) {
+    const modal = document.getElementById("visitorTimelineModal");
+    const title = document.getElementById("timelineVisitorTitle");
+    const subtitle = document.getElementById("timelineVisitorSubtitle");
+    const statsRow = document.getElementById("timelineStatsRow");
+    const content = document.getElementById("visitorTimelineContent");
+
+    if (modal) modal.style.display = "flex";
+    if (title) title.textContent = `👤 Visitor: ${visitorId}`;
+    if (subtitle) subtitle.textContent = "Loading chronological activity timeline...";
+    if (statsRow) statsRow.innerHTML = "";
+    if (content) content.innerHTML = `<div style="text-align:center; padding:30px; opacity:0.6;">Fetching timeline events...</div>`;
+
+    const headers = getAdminAuthHeaders();
+    const urls = getApiEndpoints(`/admin/analytics/visitors/${encodeURIComponent(visitorId)}`);
+
+    for (const url of urls) {
+        try {
+            const res = await fetch(url, { headers, credentials: "include" });
+            if (res.ok) {
+                const json = await res.json();
+                if (json.success && json.data) {
+                    renderTimelineData(json.data);
+                    return;
+                }
+            }
+        } catch (e) {}
+    }
+
+    if (content) content.innerHTML = `<div style="text-align:center; padding:30px; color:#ff6b81;">Could not load timeline for this visitor.</div>`;
+}
+
+function renderTimelineData(data) {
+    const visitor = data.visitor || {};
+    const subtitle = document.getElementById("timelineVisitorSubtitle");
+    const statsRow = document.getElementById("timelineStatsRow");
+    const content = document.getElementById("visitorTimelineContent");
+
+    if (subtitle) {
+        subtitle.textContent = `First seen: ${formatIndianDateTime(visitor.firstSeenAt)} • Last seen: ${formatIndianDateTime(visitor.lastSeenAt)}`;
+    }
+
+    if (statsRow) {
+        statsRow.innerHTML = `
+            <span><strong>${visitor.totalSessions || 1}</strong> Sessions</span>
+            <span><strong>${visitor.totalPageViews || 0}</strong> Page Views</span>
+            <span><strong>${visitor.totalCalculations || 0}</strong> Calculations</span>
+            <span>IP: <strong>${escapeHtml(visitor.lastIp || "N/A")}</strong></span>
+        `;
+    }
+
+    if (!data.timeline || data.timeline.length === 0) {
+        if (content) content.innerHTML = `<div style="text-align:center; padding:30px; opacity:0.6;">No activity events recorded for this visitor.</div>`;
+        return;
+    }
+
+    let html = "";
+    data.timeline.forEach(item => {
+        const timeStr = item.timestamp ? formatIndianDateTime(item.timestamp) : "";
+        html += `
+            <div class="timeline-event-item ${escapeHtml(item.type)}">
+                <div class="timeline-event-time">${escapeHtml(timeStr)}</div>
+                <div class="timeline-event-content">
+                    <div class="timeline-event-title">${escapeHtml(item.title)}</div>
+                    <div class="timeline-event-details">${escapeHtml(item.details)}</div>
+                </div>
+            </div>
+        `;
+    });
+
+    if (content) content.innerHTML = html;
+}
+
+function closeVisitorTimelineModal() {
+    const modal = document.getElementById("visitorTimelineModal");
+    if (modal) modal.style.display = "none";
+}
+
+async function deleteAdminRecord(name1, name2, id) {
+    const confirmMsg = `Delete "${name1} ❤️ ${name2}" from records?`;
+    if (!confirm(confirmMsg)) return;
+
+    // Optimistic UI update
+    allAdminRecords = allAdminRecords.filter(r => {
+        if (id && r.id && r.id === id) return false;
+        return !((r.name1 === name1 && r.name2 === name2) || (r.name1 === name2 && r.name2 === name1));
+    });
+    renderAdminDashboard(allAdminRecords);
+
+    const headers = getAdminAuthHeaders();
+    const queryParams = `?name1=${encodeURIComponent(name1)}&name2=${encodeURIComponent(name2)}`;
+    const path = id ? `/flames/records/${encodeURIComponent(id)}${queryParams}` : `/flames/records${queryParams}`;
+    const urls = getApiEndpoints(path);
+
+    for (const url of urls) {
+        try {
+            const response = await fetch(url, {
+                method: "DELETE",
+                headers,
+                credentials: "include",
+                body: JSON.stringify({ id, name1, name2 })
+            });
+            if (response.ok) {
+                break;
+            }
+        } catch (e) {
+            // try next endpoint
+        }
+    }
+
+    setTimeout(fetchAdminRecords, 1000);
 }
 
 /* --- Password Management --- */
@@ -2929,6 +3796,40 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
+// Restore admin session on page load / refresh if previously logged in
+function checkAdminSessionOnLoad() {
+    sendPageViewTelemetry();
+    if (localStorage.getItem("flames_admin_session") === "active") {
+        openAdminDashboard();
+        ensureAdminToken().then(() => {
+            fetchAdminSecurityData();
+        });
+    }
+}
+
+async function sendPageViewTelemetry() {
+    try {
+        const pingUrls = getApiEndpoints("/analytics/ping");
+        for (const url of pingUrls) {
+            try {
+                const res = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({ route: window.location.pathname || "/" })
+                });
+                if (res.ok) break;
+            } catch (e) {}
+        }
+    } catch (e) {}
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", checkAdminSessionOnLoad);
+} else {
+    checkAdminSessionOnLoad();
+}
+
 </script>
 
 <!-- =========================
@@ -2939,16 +3840,101 @@ document.addEventListener("keydown", (e) => {
     <canvas id="adminEffectsCanvas" class="admin-canvas"></canvas>
 
     <div class="admin-screen-content">
-        <!-- Main Card: Search & Live Table -->
-        <div class="admin-main-card">
-            <div class="admin-search-wrapper">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="adminSearchInput" placeholder="Search by name, result, date..." oninput="filterAdminRecords()">
-                <span class="refresh-indicator">MongoDB Atlas Live</span>
+        <!-- Top Navigation Bar: Tabs & Live Pulse -->
+        <div class="admin-nav-bar">
+            <div class="admin-tabs-segmented">
+                <button id="tabRecordsBtn" class="admin-tab-btn active" onclick="switchAdminTab('records')">
+                    ❤️ Love Story Records
+                </button>
+                <button id="tabSecurityBtn" class="admin-tab-btn" onclick="switchAdminTab('security')">
+                    🛡️ Security & Observability
+                </button>
+            </div>
+            <div class="admin-status-badge">
+                <span class="pulse-dot"></span>
+                <span id="adminLiveIndicator">Live Telemetry</span>
+            </div>
+        </div>
+
+        <!-- VIEW 1: Live Love Story Records -->
+        <div id="adminRecordsView" class="admin-view-container">
+            <div class="admin-main-card">
+                <div class="admin-search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="adminSearchInput" placeholder="Search by name, result, date..." oninput="filterAdminRecords()">
+                    <span class="refresh-indicator">MongoDB Atlas Live</span>
+                </div>
+
+                <div class="admin-table-scroll" id="adminRecordsList">
+                    <!-- Dynamic Live Records Table -->
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: Security & Visitor Observability -->
+        <div id="adminSecurityView" class="admin-view-container" style="display: none;">
+            <!-- KPI Summary Cards Row -->
+            <div class="admin-kpi-row">
+                <div class="kpi-card">
+                    <div class="kpi-icon">🟢</div>
+                    <div class="kpi-body">
+                        <div class="kpi-value" id="kpiActiveVisitors">0</div>
+                        <div class="kpi-label">Active Visitors (5m)</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon">👥</div>
+                    <div class="kpi-body">
+                        <div class="kpi-value" id="kpiTodayVisitors">0</div>
+                        <div class="kpi-label">Visitors Today</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon">🔄</div>
+                    <div class="kpi-body">
+                        <div class="kpi-value" id="kpiTodaySessions">0</div>
+                        <div class="kpi-label">Sessions Today</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon">💘</div>
+                    <div class="kpi-body">
+                        <div class="kpi-value" id="kpiTotalCalcs">0</div>
+                        <div class="kpi-label">Calculations</div>
+                    </div>
+                </div>
+                <div class="kpi-card alert-card">
+                    <div class="kpi-icon">⚠️</div>
+                    <div class="kpi-body">
+                        <div class="kpi-value alert-val" id="kpiAlertCount">0</div>
+                        <div class="kpi-label">Security Alerts (24h)</div>
+                    </div>
+                </div>
             </div>
 
-            <div class="admin-table-scroll" id="adminRecordsList">
-                <!-- Dynamic Live Records Table -->
+            <!-- Two-column Analytics Grid: Visitors + Security Events -->
+            <div class="admin-analytics-grid">
+                <!-- Recent Visitors Card -->
+                <div class="admin-analytics-card">
+                    <div class="card-header">
+                        <h4>👤 Recent Visitors</h4>
+                        <span class="badge" id="visitorsCountBadge">Live Feed</span>
+                    </div>
+                    <div class="card-table-scroll" id="recentVisitorsContainer">
+                        <div style="text-align:center; padding: 30px; opacity: 0.6;">Loading visitor telemetry...</div>
+                    </div>
+                </div>
+
+                <!-- Recent Security Events Card -->
+                <div class="admin-analytics-card">
+                    <div class="card-header">
+                        <h4>🚨 Security & Audit Events</h4>
+                        <span class="badge" id="securityEventsBadge">Real-time</span>
+                    </div>
+                    <div class="card-table-scroll" id="recentSecurityEventsContainer">
+                        <div style="text-align:center; padding: 30px; opacity: 0.6;">Loading security events...</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -2999,6 +3985,27 @@ document.addEventListener("keydown", (e) => {
         <div class="modal-btn-row">
             <button class="modal-cancel-btn" onclick="closeChangePasswordModal()">Cancel</button>
             <button class="modal-save-btn" onclick="saveNewAdminPassword()">Save New Password</button>
+        </div>
+    </div>
+<!-- =========================
+     VISITOR TIMELINE MODAL
+========================= -->
+<div id="visitorTimelineModal" class="password-modal" style="display: none;">
+    <div class="password-modal-card timeline-modal-card">
+        <div class="timeline-header">
+            <div>
+                <h3 id="timelineVisitorTitle">👤 Visitor Details</h3>
+                <p id="timelineVisitorSubtitle" style="font-size:0.82rem; opacity:0.8; margin-top:2px;"></p>
+            </div>
+            <button class="modal-close-btn" onclick="closeVisitorTimelineModal()" title="Close">✕</button>
+        </div>
+
+        <div class="timeline-stats-row" id="timelineStatsRow">
+            <!-- Rendered dynamically -->
+        </div>
+
+        <div class="timeline-scroll" id="visitorTimelineContent">
+            <!-- Rendered dynamically -->
         </div>
     </div>
 </div>
