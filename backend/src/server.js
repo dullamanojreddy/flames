@@ -4,6 +4,23 @@
  * graceful shutdown. The process exits when the database connection fails.
  */
 
+const path = require("path");
+const fs = require("fs");
+
+// Search candidate locations for .env (backend/.env, root .env, or current working directory)
+const envCandidates = [
+    path.resolve(__dirname, "../.env"),
+    path.resolve(__dirname, "../../.env"),
+    path.resolve(process.cwd(), ".env"),
+    path.resolve(process.cwd(), "backend/.env")
+];
+
+for (const envPath of envCandidates) {
+    if (fs.existsSync(envPath)) {
+        require("dotenv").config({ path: envPath });
+        break;
+    }
+}
 require("dotenv").config();
 
 const { createApp } = require("./app");

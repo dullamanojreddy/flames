@@ -8,7 +8,7 @@
  * display timezone configurable through the TIMEZONE environment variable.
  */
 
-const DEFAULT_TIMEZONE = "UTC";
+const DEFAULT_TIMEZONE = "Asia/Kolkata";
 
 /**
  * Resolve the timezone to use. Reads TIMEZONE from the environment.

@@ -215,3 +215,47 @@ test("date utils produce DD-MM-YYYY, weekday name and numeric year", () => {
     assert.equal(details.day, "Tuesday");
     assert.ok(details.timestamp instanceof Date);
 });
+
+test("deleteHistoryRecord deletes record by name pair", async () => {
+    const model = new FakeFlamesModel();
+    await service.persistFlamesResult({ name1: "Romeo", name2: "Juliet" }, { flamesModel: model });
+    assert.equal(model.count(), 1);
+
+    const deleted = await service.deleteHistoryRecord({ name1: "Romeo", name2: "Juliet" }, { flamesModel: model });
+    assert.equal(deleted, true);
+    assert.equal(model.count(), 0);
+
+    const deleteAgain = await service.deleteHistoryRecord({ name1: "Romeo", name2: "Juliet" }, { flamesModel: model });
+    assert.equal(deleteAgain, false);
+});
+
+test("getAllHistoryRecords returns records in descending order (latest to oldest)", async () => {
+    const model = new FakeFlamesModel();
+    // Insert an older record (yesterday)
+    model.seed({
+        name1: "Romeo",
+        name2: "Juliet",
+        normalizedPair: "juliet|romeo",
+        result: "Lovers",
+        percentage: 95,
+        attempts: 1,
+        timestamp: new Date(Date.now() - 86400000)
+    });
+    // Insert a newer record (just now)
+    model.seed({
+        name1: "Alice",
+        name2: "Bob",
+        normalizedPair: "alice|bob",
+        result: "Friends",
+        percentage: 70,
+        attempts: 1,
+        timestamp: new Date()
+    });
+
+    const records = await service.getAllHistoryRecords({ flamesModel: model });
+    assert.equal(records.length, 2);
+    // Alice & Bob must be first (latest), Romeo & Juliet second (older)
+    assert.equal(records[0].name1, "Alice");
+    assert.equal(records[1].name1, "Romeo");
+    assert.ok(new Date(records[0].timestamp) > new Date(records[1].timestamp));
+});

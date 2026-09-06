@@ -19,3 +19,10 @@ Thumbs.db
 # Editor / IDE
 .vscode/
 .idea/
+
+# Private Development Protocol & Offline Git History Backups
+PRIVATE_DEV_RULES.md
+github_logs_backup.*
+git_history_archive.*
+docs/
+

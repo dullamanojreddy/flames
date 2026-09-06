@@ -132,3 +132,12 @@ test("rate limiting returns 429 when the limit is exceeded", async () => {
 
     srv.close();
 });
+
+test("DELETE /api/flames/records returns 400 when missing identifiers", async () => {
+    const res = await fetch(`${baseUrl}/api/flames/records`, {
+        method: "DELETE"
+    });
+    assert.equal(res.status, 400);
+    const body = await res.json();
+    assert.equal(body.success, false);
+});

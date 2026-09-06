@@ -97,4 +97,7 @@ const FlamesResultSchema = new mongoose.Schema(
     }
 );
 
+// High-speed compound index for latest-to-oldest history retrieval
+FlamesResultSchema.index({ timestamp: -1, _id: -1 });
+
 module.exports = mongoose.model("FlamesResult", FlamesResultSchema);
